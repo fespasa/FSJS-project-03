@@ -7,6 +7,8 @@ window.onload = function() {
 	const shirtColor = document.querySelector('#color');
 	const activities = document.querySelector('.activities');
 	const activitiesInputs = document.querySelectorAll('.activities input');
+	const paymentSection = document.querySelectorAll('fieldset')[3];
+	const payment = document.querySelector('#payment');
 	
 	let total = 0;
 	
@@ -125,4 +127,38 @@ window.onload = function() {
 			}
 		}
 	}
+	
+	/* ---------- PAYMENT SECTION ---------- */
+	// identify each div
+	const creditCardDiv = paymentSection.children[3];
+	const payPalDiv = paymentSection.children[4];
+	const bitcoinDiv = paymentSection.children[5];
+	
+	// hide the "Select Payment Method" option and select "Credit Card" as the default option 
+	let paymentOptions = payment.children;
+	paymentOptions[0].style.display = "none";
+	payment.selectedIndex = 1;
+	
+	// hide divs that haven't had to be displayed with the "Credit Card" option.
+	payPalDiv.style.display = "none";
+	bitcoinDiv.style.display = "none";
+	
+	payment.addEventListener("change", () => {
+		// for each diferent value we show the correct div.
+		if(payment.value === "credit card"){
+			creditCardDiv.style.display = "block";
+			payPalDiv.style.display = "none";
+			bitcoinDiv.style.display = "none";
+		}
+		if(payment.value === "paypal"){
+			creditCardDiv.style.display = "none";
+			payPalDiv.style.display = "block";
+			bitcoinDiv.style.display = "none";
+		}
+		if(payment.value === "bitcoin"){
+			creditCardDiv.style.display = "none";
+			payPalDiv.style.display = "none";
+			bitcoinDiv.style.display = "block";
+		}
+	});
 }
