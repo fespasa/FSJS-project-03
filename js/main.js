@@ -200,6 +200,17 @@ window.onload = function() {
 
 	let validation = [false, false, false, false, false, false];
 
+	form.addEventListener("change", () => {
+		let isValid = validation.indexOf(false);
+        if(isValid !== -1){
+            submit.disabled = true;
+        } else {
+            submit.disabled = false;
+        }
+	});
+
+
+
 	submit.addEventListener("click", () => {
 		alert("Submited!")
         console.log(validation.indexOf(false));
@@ -211,14 +222,12 @@ window.onload = function() {
 
     function nameValidation(){
         if(nameField.value.length > 0){
-            nameField.style.border = "solid green";
-            validation[0] = true;
+            validate(nameField, 0, true);
         } else {
-            nameField.style.border = "solid red";
+            validate(nameField, 0, false);
             let errorMessage = document.createElement("H3");
             errorMessage.innerHTML = "Name can't be blank";
             errorMessage.style.color = "red";
-            validation[0] = false;
         }
     }
 
@@ -226,11 +235,9 @@ window.onload = function() {
         let valEmail = emailRegex.test(emailField.value);
 
         if(valEmail){
-            emailField.style.border = "solid green";
-            validation[1] = true;
+            validate(emailField, 1, true);
         } else {
-            emailField.style.border = "solid red";
-            validation[1] = false;
+            validate(emailField, 1, false);
         }
     }
 
@@ -253,15 +260,12 @@ window.onload = function() {
 
         if(valCC){
         	if(cc.value.length < 13 || cc.value.length > 16){
-                cc.style.border = "solid red";
-                validation[3] = false;
+                validate(cc, 3, false);
 			} else {
-                cc.style.border = "solid green";
-                validation[3] = true;
+                validate(cc, 3, true);
 			}
         } else {
-            cc.style.border = "solid red";
-            validation[3] = false;
+            validate(cc, 3, false);
         }
 	}
 
@@ -270,15 +274,12 @@ window.onload = function() {
 
         if(valZip){
             if(zip.value.length !== 5){
-                zip.style.border = "solid red";
-                validation[4] = false;
+                validate(zip, 4, false);
             } else {
-                zip.style.border = "solid green";
-                validation[4] = true;
+                validate(zip, 4, true);
             }
         } else {
-            zip.style.border = "solid red";
-            validation[4] = false;
+            validate(zip, 4, false);
         }
     }
 
@@ -287,15 +288,21 @@ window.onload = function() {
 
         if(valCvv){
             if(cvv.value.length !== 3){
-                cvv.style.border = "solid red";
-                validation[5] = false;
+                validate(cvv, 5, false);
             } else {
-                cvv.style.border = "solid green";
-                validation[5] = true;
+                validate(cvv, 5, true);
             }
         } else {
-            cvv.style.border = "solid red";
-            validation[5] = false;
+        	validate(cvv, 5, false);
         }
     }
+
+    function validate(obj, pos, eval){
+    	if(eval === false){
+            obj.style.border = "solid red";
+		} else {
+            obj.style.border = "solid green";
+		}
+    	validation[pos] = eval;
+	}
 }
