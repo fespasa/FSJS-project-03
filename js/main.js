@@ -1,48 +1,71 @@
 window.onload = function() {
+	const form = document.querySelector("form");
 	const nameField = document.querySelector('#name');
+	const emailField = document.querySelector('#mail');
 	const jobRoleField = document.querySelector('#title');
-	// const shirtSection = document.querySelector('.shirt');
-	const shirtSize = document.querySelector('#size');
 	const shirtDesign = document.querySelector('#design');
 	const shirtColor = document.querySelector('#color');
 	const activities = document.querySelector('.activities');
 	const activitiesInputs = document.querySelectorAll('.activities input');
 	const paymentSection = document.querySelectorAll('fieldset')[3];
 	const payment = document.querySelector('#payment');
-	
+	const cc = document.querySelector("#cc-num");
+	const zip = document.querySelector("#zip");
+	const cvv = document.querySelector("#cvv");
+	const submit = document.querySelector("button");
+	const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	const numRegex = /^[0-9]+$/;
 	let total = 0;
-	
+
+    submit.removeAttribute('disabled');
+
+    /* ---------- NAME SECTION ---------- */
 	nameField.focus();
+
+	nameField.addEventListener("keyup", nameValidation);
+
+
+    /* ---------- EMAIL SECTION ---------- */
+
+    emailField.addEventListener("keyup", emailValidation);
+
 	
 	/* ---------- JOB ROLE SECTION ---------- */
+    document.querySelector('#other-title').style.display = "none";
+
 	jobRoleField.addEventListener("change", () => {
-		if(document.querySelector('#other-title')) {
-			document.querySelector('#other-title').style.display = "none";
-		}
 		if(jobRoleField.value === "other") {
-			const jobTextField = document.createElement("INPUT");
-			jobTextField.setAttribute("type", "text");
-			jobTextField.setAttribute("id", "other-title");
-			jobTextField.setAttribute("placeholder", "Your Job Role");
-			jobRoleField.after(jobTextField);
+			document.querySelector('#other-title').style.display = "block";
+		} else {
+            document.querySelector('#other-title').style.display = "none";
 		}
 	});
 	
 	/* ---------- T-SHIRT INFO SECTION ---------- */
-	const defaultOption = document.createElement("OPTION");
-	defaultOption.text = "<-- Please select a T-shirt theme"
-	shirtColor.childNodes[0].before(defaultOption);
+    if(shirtDesign.value === "Select Theme")
+    {
+        shirtColor.parentNode.style.display = "none";
+    }
+
 	shirtDesign.addEventListener("change", () => {
+        if(shirtDesign.value === "Select Theme")
+        {
+            shirtColor.parentNode.style.display = "none";
+        } else {
+            shirtColor.parentNode.style.display = "block";
+		}
 		for(let i = 1; i < shirtColor.childNodes.length; i = i + 2){
 			shirtColor.childNodes[i].style.display = "";	
 			if( shirtDesign.value === "js puns"){
-				if(i >= 6){
-					shirtColor.childNodes[i].style.display = "none";
-				}
+				if(i >= 6) {
+                    shirtColor.childNodes[i].style.display = "none";
+                }
+                shirtColor.childNodes[1].selected = 'selected';
 			} else if (shirtDesign.value === "heart js"){
 				if(i < 6){
 					shirtColor.childNodes[i].style.display = "none";
 				}
+                shirtColor.childNodes[7].selected = 'selected';
 			}
 		}
 	});
@@ -64,7 +87,8 @@ window.onload = function() {
 				totalAmmount.innerHTML = "Total: $" + total;
 				activities.appendChild(totalAmmount);
 			}
-		});
+            activitiesValidation();// Calls the validation function too validate that something is checked.
+        });
 	}
 	
 	function addAmount(index){
@@ -154,11 +178,124 @@ window.onload = function() {
 			creditCardDiv.style.display = "none";
 			payPalDiv.style.display = "block";
 			bitcoinDiv.style.display = "none";
+			validation[3]= true;
+            validation[4]= true;
+            validation[5]= true;
 		}
-		if(payment.value === "bitcoin"){
-			creditCardDiv.style.display = "none";
-			payPalDiv.style.display = "none";
-			bitcoinDiv.style.display = "block";
-		}
+		if(payment.value === "bitcoin") {
+            creditCardDiv.style.display = "none";
+            payPalDiv.style.display = "none";
+            bitcoinDiv.style.display = "block";
+            validation[3]= true;
+            validation[4]= true;
+            validation[5]= true;
+        }
 	});
+
+	cc.addEventListener("keyup", creditCardValidation);
+    zip.addEventListener("keyup", zipValidation);
+    cvv.addEventListener("keyup", cvvValidation);
+	
+	/* ---------- FORM VALIDATION ---------- */
+
+	let validation = [false, false, false, false, false, false];
+
+	submit.addEventListener("click", () => {
+		alert("Submited!")
+        console.log(validation.indexOf(false));
+        console.log(validation);
+        if(validation.indexOf(false) !== -1){
+            submit.disabled = true;
+        }
+	});
+
+    function nameValidation(){
+        if(nameField.value.length > 0){
+            nameField.style.border = "solid green";
+            validation[0] = true;
+        } else {
+            nameField.style.border = "solid red";
+            let errorMessage = document.createElement("H3");
+            errorMessage.innerHTML = "Name can't be blank";
+            errorMessage.style.color = "red";
+            validation[0] = false;
+        }
+    }
+
+    function emailValidation(){
+        let valEmail = emailRegex.test(emailField.value);
+
+        if(valEmail){
+            emailField.style.border = "solid green";
+            validation[1] = true;
+        } else {
+            emailField.style.border = "solid red";
+            validation[1] = false;
+        }
+    }
+
+    function activitiesValidation() {
+        let isSomethingChecked = false;
+        for(let i = 0; i < activitiesInputs.length; i++){
+            if(activitiesInputs[i].checked){
+                isSomethingChecked = true;
+            }
+        }
+        if(isSomethingChecked === false){
+            validation[2] = false;
+        } else {
+            validation[2] = true;
+        }
+    }
+
+    function creditCardValidation(){
+        let valCC = numRegex.test(cc.value);
+
+        if(valCC){
+        	if(cc.value.length < 13 || cc.value.length > 16){
+                cc.style.border = "solid red";
+                validation[3] = false;
+			} else {
+                cc.style.border = "solid green";
+                validation[3] = true;
+			}
+        } else {
+            cc.style.border = "solid red";
+            validation[3] = false;
+        }
+	}
+
+    function zipValidation(){
+        let valZip = numRegex.test(zip.value);
+
+        if(valZip){
+            if(zip.value.length !== 5){
+                zip.style.border = "solid red";
+                validation[4] = false;
+            } else {
+                zip.style.border = "solid green";
+                validation[4] = true;
+            }
+        } else {
+            zip.style.border = "solid red";
+            validation[4] = false;
+        }
+    }
+
+    function cvvValidation(){
+        let valCvv = numRegex.test(cvv.value);
+
+        if(valCvv){
+            if(cvv.value.length !== 3){
+                cvv.style.border = "solid red";
+                validation[5] = false;
+            } else {
+                cvv.style.border = "solid green";
+                validation[5] = true;
+            }
+        } else {
+            cvv.style.border = "solid red";
+            validation[5] = false;
+        }
+    }
 }
