@@ -212,6 +212,12 @@ window.onload = function() {
         submit.disabled = false;
 	});
 
+	payment.addEventListener("change", ()=> {
+		// also when we change the payment method we are cheking and allowing submitting again.
+        isValid = validation.indexOf(false);
+        submit.disabled = false;
+	});
+
 	submit.addEventListener("click", () => {
 		// logs the first position of the validation that is false on the console.
         console.log(validation.indexOf(false));
