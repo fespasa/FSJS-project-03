@@ -1,4 +1,5 @@
 window.onload = function() {
+	// Create the variables for the DOM elements.
     const form = document.querySelector("form");
     const nameField = document.querySelector('#name');
     const emailField = document.querySelector('#mail');
@@ -13,26 +14,29 @@ window.onload = function() {
     const zip = document.querySelector("#zip");
     const cvv = document.querySelector("#cvv");
     const submit = document.querySelector("button");
+    // I use regex for email and fields for CreditCard, ZipCode and CVV
     const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const numRegex = /^[0-9]+$/;
+    // create a veriable called total where total cost of activities will be stored.
     let total = 0;
+    // an array called vaidation that will store the state of validation of each field that should be validated.
     let validation = [false, false, false, false, false, false];
 
 
     /* ---------- NAME SECTION ---------- */
-	nameField.focus();
+	nameField.focus(); // start with the cursor in the NameField
 
-	nameField.addEventListener("keyup", nameValidation);
+	nameField.addEventListener("keyup", nameValidation); // each time you write something in the name field will be validated.
 
 
     /* ---------- EMAIL SECTION ---------- */
 
-    emailField.addEventListener("keyup", emailValidation);
+    emailField.addEventListener("keyup", emailValidation); // each time you write something in the email field will be validated.
 
-	
-	/* ---------- JOB ROLE SECTION ---------- */
+
+    /* ---------- JOB ROLE SECTION ---------- */
     document.querySelector('#other-title').style.display = "none";
-
+	// by defauly job Role field won't be displayed. Only when the value of jobRole changes to other it will be displayed.
 	jobRoleField.addEventListener("change", () => {
 		if(jobRoleField.value === "other") {
 			document.querySelector('#other-title').style.display = "block";
@@ -45,9 +49,10 @@ window.onload = function() {
     if(shirtDesign.value === "Select Theme")
     {
         shirtColor.parentNode.style.display = "none";
-    }
+    } // Color dropdown is not displayed by default
 
 	shirtDesign.addEventListener("change", () => {
+		// Only when the uses selects a theme the color dropdown shows only with the option of that particular theme.
         if(shirtDesign.value === "Select Theme")
         {
             shirtColor.parentNode.style.display = "none";
@@ -168,7 +173,7 @@ window.onload = function() {
 	bitcoinDiv.style.display = "none";
 	
 	payment.addEventListener("change", () => {
-		// for each diferent value we show the correct div.
+		// for each diferent value we show the correct div. And we validate Credit Card, ZipCode and CVV because we won't use them.
 		if(payment.value === "credit card"){
 			creditCardDiv.style.display = "block";
 			payPalDiv.style.display = "none";
@@ -192,29 +197,30 @@ window.onload = function() {
         }
 	});
 
+	// validates Credit Card, ZipCode and CVV each time you enter a key on it.
 	cc.addEventListener("keyup", creditCardValidation);
     zip.addEventListener("keyup", zipValidation);
     cvv.addEventListener("keyup", cvvValidation);
 	
 	/* ---------- FORM VALIDATION ---------- */
-    let isValid;
+    let isValid; // creates a variable that will check the entire form.
 
-	form.addEventListener("change", () => {
+	form.addEventListener("keyup", () => {
+		// in each change of the form we will validate the form checking if there
 		isValid = validation.indexOf(false);
+		// allows submitting again.
         submit.disabled = false;
-		if(isValid !== -1){
-			form.removeAttribute("action");
-		} else {
-			form.setAttribute("action", "index.html");
-		}
 	});
 
 	submit.addEventListener("click", () => {
-		alert("Submited!");
+		// logs the first position of the validation that is false on the console.
         console.log(validation.indexOf(false));
 
+        // if the form is not valid
         if(isValid !== -1){
+        	// disables the submit button
             submit.disabled = true;
+            // creates a div where we will store error messages... and remove a previous error div.
             let error = document.querySelector("#errorDiv");
             if(error !== null){
                 let parentError = error.parentNode;
@@ -223,19 +229,23 @@ window.onload = function() {
             let errorDiv = document.createElement("DIV");
             errorDiv.setAttribute("id", "errorDiv");
             submit.before(errorDiv);
+            // checks whichs fields have an error and shows/create content about the error.
             for(let i = 0; i < validation.length; i++){
                 let errorMessage;
                 if(validation[i] === false){
                     switch (i){
-                        case 0:
+						case 0:
+                        	// Name field option. Creates a message and the border of the text field turns red.
                             errorMessage = document.createElement("H3");
                             errorMessage.innerHTML = "Name can't be blank";
                             errorMessage.style.color = "red";
                             errorDiv.appendChild(errorMessage);
                             nameField.style.border = "solid red";
                             break;
-                        case 1:
+						case 1:
+                            // Email field option. Creates a message and the border of the text field turns red.
                             errorMessage = document.createElement("H3");
+                            // message should be different if the field is blank or the email format is not valid.
                             if(emailField.value.length === 0){
                                 errorMessage.innerHTML = "Email can't be blank";
 							}else{
@@ -246,13 +256,15 @@ window.onload = function() {
                             emailField.style.border = "solid red";
                             break;
                         case 2:
+                            // Activities option. Creates a message and the color of the activities title turns red.
                             errorMessage = document.createElement("H3");
                             errorMessage.innerHTML = "You have to select at least 1 activity";
                             errorMessage.style.color = "red";
                             errorDiv.appendChild(errorMessage);
-                            activities.style.border = "solid red";
+                            activities.childNodes[1].style.color = "red";
                             break;
                         case 3:
+                            // Credit card field option. Creates a message and the border of the text field turns red.
                             errorMessage = document.createElement("H3");
                             errorMessage.innerHTML = "Credit card should have between 13 and 16 numbers.";
                             errorMessage.style.color = "red";
@@ -260,13 +272,15 @@ window.onload = function() {
                             cc.style.border = "solid red";
                             break;
                         case 4:
+                            // Zip Code field option. Creates a message and the border of the text field turns red.
                             errorMessage = document.createElement("H3");
-                            errorMessage.innerHTML = "Postal Code should have 5 numbers.";
+                            errorMessage.innerHTML = "Zip Code should have 5 numbers.";
                             errorMessage.style.color = "red";
                             errorDiv.appendChild(errorMessage);
                             zip.style.border = "solid red";
                             break;
                         case 5:
+                            // CVV field option. Creates a message and the border of the text field turns red.
                             errorMessage = document.createElement("H3");
                             errorMessage.innerHTML = "CVV should have 3 numbers.";
                             errorMessage.style.color = "red";
@@ -279,7 +293,10 @@ window.onload = function() {
         }
 	});
 
+	// Next the functions that are validating each field everytime you change something of it.
+
     function nameValidation(){
+    	// checks if the value is not empty and store true or false in the array.
         if(nameField.value.length > 0){
             validate(nameField, 0, true);
         } else {
@@ -288,6 +305,7 @@ window.onload = function() {
     }
 
     function emailValidation(){
+    	// checks if the format of the email is correct and store true or false in the array.
         let valEmail = emailRegex.test(emailField.value);
 
         if(valEmail){
@@ -298,21 +316,25 @@ window.onload = function() {
     }
 
     function activitiesValidation() {
+    	// creates a validator call isSomethingChecked and it stores a false.
         let isSomethingChecked = false;
+        // checks every checkbox and if there's something checked, changes the validator as true.
         for(let i = 0; i < activitiesInputs.length; i++){
             if(activitiesInputs[i].checked){
                 isSomethingChecked = true;
             }
         }
+        // if validator is true we store true in the array. Otherwise, we store false.
         if(isSomethingChecked === false){
             validation[2] = false;
         } else {
             validation[2] = true;
-            activities.style.border = "none";
+            activities.childNodes[1].style.color = "";
         }
     }
 
     function creditCardValidation(){
+    	// checks if all are numbers and the length of it. If it is correct, we store true into the array. Otherwise, we store false.
         let valCC = numRegex.test(cc.value);
 
         if(valCC){
@@ -327,6 +349,7 @@ window.onload = function() {
 	}
 
     function zipValidation(){
+        // checks if all are numbers and the length of it. If it is correct, we store true into the array. Otherwise, we store false.
         let valZip = numRegex.test(zip.value);
 
         if(valZip){
@@ -341,6 +364,7 @@ window.onload = function() {
     }
 
     function cvvValidation(){
+        // checks if all are numbers and the length of it. If it is correct, we store true into the array. Otherwise, we store false.
         let valCvv = numRegex.test(cvv.value);
 
         if(valCvv){
@@ -355,6 +379,7 @@ window.onload = function() {
     }
 
     function validate(obj, pos, eval){
+    	// this function is to avoid repeating code. We change the color of border when the value is valid (green) and when it's not (red).
     	if(eval === false){
             obj.style.border = "solid red";
 		} else {
@@ -362,4 +387,4 @@ window.onload = function() {
 		}
     	validation[pos] = eval;
 	}
-}
+};
