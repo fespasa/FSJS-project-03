@@ -1,23 +1,23 @@
 window.onload = function() {
-	const form = document.querySelector("form");
-	const nameField = document.querySelector('#name');
-	const emailField = document.querySelector('#mail');
-	const jobRoleField = document.querySelector('#title');
-	const shirtDesign = document.querySelector('#design');
-	const shirtColor = document.querySelector('#color');
-	const activities = document.querySelector('.activities');
-	const activitiesInputs = document.querySelectorAll('.activities input');
-	const paymentSection = document.querySelectorAll('fieldset')[3];
-	const payment = document.querySelector('#payment');
-	const cc = document.querySelector("#cc-num");
-	const zip = document.querySelector("#zip");
-	const cvv = document.querySelector("#cvv");
-	const submit = document.querySelector("button");
-	const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-	const numRegex = /^[0-9]+$/;
-	let total = 0;
+    const form = document.querySelector("form");
+    const nameField = document.querySelector('#name');
+    const emailField = document.querySelector('#mail');
+    const jobRoleField = document.querySelector('#title');
+    const shirtDesign = document.querySelector('#design');
+    const shirtColor = document.querySelector('#color');
+    const activities = document.querySelector('.activities');
+    const activitiesInputs = document.querySelectorAll('.activities input');
+    const paymentSection = document.querySelectorAll('fieldset')[3];
+    const payment = document.querySelector('#payment');
+    const cc = document.querySelector("#cc-num");
+    const zip = document.querySelector("#zip");
+    const cvv = document.querySelector("#cvv");
+    const submit = document.querySelector("button");
+    const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const numRegex = /^[0-9]+$/;
+    let total = 0;
+    let validation = [false, false, false, false, false, false];
 
-    submit.removeAttribute('disabled');
 
     /* ---------- NAME SECTION ---------- */
 	nameField.focus();
@@ -197,26 +197,85 @@ window.onload = function() {
     cvv.addEventListener("keyup", cvvValidation);
 	
 	/* ---------- FORM VALIDATION ---------- */
-
-	let validation = [false, false, false, false, false, false];
+    let isValid;
 
 	form.addEventListener("change", () => {
-		let isValid = validation.indexOf(false);
-        if(isValid !== -1){
-            submit.disabled = true;
-        } else {
-            submit.disabled = false;
-        }
+		isValid = validation.indexOf(false);
+        submit.disabled = false;
+		if(isValid !== -1){
+			form.removeAttribute("action");
+		} else {
+			form.setAttribute("action", "index.html");
+		}
 	});
 
-
-
 	submit.addEventListener("click", () => {
-		alert("Submited!")
+		alert("Submited!");
         console.log(validation.indexOf(false));
-        console.log(validation);
-        if(validation.indexOf(false) !== -1){
+
+        if(isValid !== -1){
             submit.disabled = true;
+            let error = document.querySelector("#errorDiv");
+            if(error !== null){
+                let parentError = error.parentNode;
+                parentError.removeChild(error);
+			}
+            let errorDiv = document.createElement("DIV");
+            errorDiv.setAttribute("id", "errorDiv");
+            submit.before(errorDiv);
+            for(let i = 0; i < validation.length; i++){
+                let errorMessage;
+                if(validation[i] === false){
+                    switch (i){
+                        case 0:
+                            errorMessage = document.createElement("H3");
+                            errorMessage.innerHTML = "Name can't be blank";
+                            errorMessage.style.color = "red";
+                            errorDiv.appendChild(errorMessage);
+                            nameField.style.border = "solid red";
+                            break;
+                        case 1:
+                            errorMessage = document.createElement("H3");
+                            if(emailField.value.length === 0){
+                                errorMessage.innerHTML = "Email can't be blank";
+							}else{
+                                errorMessage.innerHTML = "Email should be correctly formatted";
+							}
+                            errorMessage.style.color = "red";
+                            errorDiv.appendChild(errorMessage);
+                            emailField.style.border = "solid red";
+                            break;
+                        case 2:
+                            errorMessage = document.createElement("H3");
+                            errorMessage.innerHTML = "You have to select at least 1 activity";
+                            errorMessage.style.color = "red";
+                            errorDiv.appendChild(errorMessage);
+                            activities.style.border = "solid red";
+                            break;
+                        case 3:
+                            errorMessage = document.createElement("H3");
+                            errorMessage.innerHTML = "Credit card should have between 13 and 16 numbers.";
+                            errorMessage.style.color = "red";
+                            errorDiv.appendChild(errorMessage);
+                            cc.style.border = "solid red";
+                            break;
+                        case 4:
+                            errorMessage = document.createElement("H3");
+                            errorMessage.innerHTML = "Postal Code should have 5 numbers.";
+                            errorMessage.style.color = "red";
+                            errorDiv.appendChild(errorMessage);
+                            zip.style.border = "solid red";
+                            break;
+                        case 5:
+                            errorMessage = document.createElement("H3");
+                            errorMessage.innerHTML = "CVV should have 3 numbers.";
+                            errorMessage.style.color = "red";
+                            errorDiv.appendChild(errorMessage);
+                            cvv.style.border = "solid red";
+                            break;
+                    }
+                }
+            }
         }
 	});
 
@@ -225,9 +284,6 @@ window.onload = function() {
             validate(nameField, 0, true);
         } else {
             validate(nameField, 0, false);
-            let errorMessage = document.createElement("H3");
-            errorMessage.innerHTML = "Name can't be blank";
-            errorMessage.style.color = "red";
         }
     }
 
@@ -252,6 +308,7 @@ window.onload = function() {
             validation[2] = false;
         } else {
             validation[2] = true;
+            activities.style.border = "none";
         }
     }
 
