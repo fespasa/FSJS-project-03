@@ -99,14 +99,14 @@ window.onload = function() {
 	function addAmount(index){
 		 
 		if(index === 0) {
-			// if it's the first activity the function adds 200 when is checked. If it's not checked the function substract 200.
+			// if it's the first activity the function adds 200 when is checked. If it's not checked the function subtract 200.
 			if(activitiesInputs[0].checked){
 				total = total + 200;
 			} else {
 				total = total - 200;
 			}
 		} else {
-			// if it's any other activity the function adds 100 when is checked. If it's not checked the function substract 100.
+			// if it's any other activity the function adds 100 when is checked. If it's not checked the function subtract 100.
 			if(activitiesInputs[index].checked){
 				total = total + 100;
 			} else {
@@ -120,27 +120,15 @@ window.onload = function() {
 		switch(index) {
 			case 1:
 				disableEnableActivity(3);
-				disableEnableActivity(5);
 				break;
 			case 2:
 				disableEnableActivity(4);
-				disableEnableActivity(6);
 				break;
 			case 3:
 				disableEnableActivity(1);
-				disableEnableActivity(5);
 				break;
 			case 4:
 				disableEnableActivity(2);
-				disableEnableActivity(6);
-				break;
-			case 5:
-				disableEnableActivity(1);
-				disableEnableActivity(3);
-				break;
-			case 6:
-				disableEnableActivity(2);
-				disableEnableActivity(4);
 				break;
 		}
 		
@@ -206,17 +194,23 @@ window.onload = function() {
     let isValid; // creates a variable that will check the entire form.
 
 	form.addEventListener("keyup", () => {
-		// in each change of the form we will validate the form checking if there
+		// in each change of the form we will validate the form checking if there is anything that completes the form as it has to be or not.
 		isValid = validation.indexOf(false);
 		// allows submitting again.
         submit.disabled = false;
 	});
 
 	payment.addEventListener("change", ()=> {
-		// also when we change the payment method we are cheking and allowing submitting again.
+		// also when we change the payment method we are checking and allowing submitting again.
         isValid = validation.indexOf(false);
         submit.disabled = false;
 	});
+
+    activities.addEventListener("change", ()=> {
+        // also when we change activities we are checking and allowing submitting again.
+        isValid = validation.indexOf(false);
+        submit.disabled = false;
+    });
 
 	submit.addEventListener("click", () => {
 		// logs the first position of the validation that is false on the console.
